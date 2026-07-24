@@ -2,4 +2,7 @@
 UI module: User interface components and windows
 """
 
-__all__ = []
+from .graphics_widget import CharacterGraphicsWidget
+from .main_window import MainWindow
+
+__all__ = ["CharacterGraphicsWidget", "MainWindow"]

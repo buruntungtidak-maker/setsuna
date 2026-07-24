@@ -12,11 +12,11 @@ from dataclasses import dataclass, asdict
 @dataclass
 class AIConfig:
     """AI configuration"""
-    provider: str = "openai"
+    provider: str = "ollama"
     api_key: str = ""
-    model: str = "gpt-4"
+    model: str = "mistral"
+    base_url: str = "http://localhost:11434"
     temperature: float = 0.7
-    base_url: Optional[str] = None
 
 
 @dataclass
@@ -59,6 +59,7 @@ class ConfigManager:
     Configuration manager for loading/saving JSON configuration.
     
     Supports automatic loading, saving, and default values.
+    Updated for Sprint 2: Ollama as default AI provider
     """
     
     def __init__(self, config_path: str = "config/config.json"):
@@ -74,7 +75,7 @@ class ConfigManager:
     
     @staticmethod
     def _create_default_config() -> Config:
-        """Create default configuration."""
+        """Create default configuration with Ollama."""
         return Config(
             ai=AIConfig(),
             character=CharacterConfig(),
