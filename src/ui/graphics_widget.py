@@ -49,7 +49,7 @@ class CharacterGraphicsWidget(QGraphicsView):
         self.character_item: Optional[QGraphicsPixmapItem] = None
         
         # Setup widget
-        self.setRenderHint(self.RenderHint.SmoothPixmapTransform)
+        self.setRenderHint(QGraphicsView.RenderHint.SmoothPixmapTransform)
         self.setStyleSheet("background: transparent;")
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
@@ -73,20 +73,17 @@ class CharacterGraphicsWidget(QGraphicsView):
         Returns:
             QPixmap for Qt rendering
         """
-        # Convert RGBA to RGB for QImage
-        if pil_image.mode == "RGBA":
-            # Create RGB image with white background
-            rgb_image = Image.new("RGB", pil_image.size, (255, 255, 255))
-            rgb_image.paste(pil_image, mask=pil_image.split()[3])  # Use alpha channel as mask
-            pil_image = rgb_image
+        # Convert RGBA to RGBA for proper transparency
+        if pil_image.mode != "RGBA":
+            pil_image = pil_image.convert("RGBA")
         
         # Convert to QImage
-        data = pil_image.tobytes("raw", "RGB")
+        data = pil_image.tobytes("raw", "RGBA")
         q_image = QImage(
             data,
             pil_image.width,
             pil_image.height,
-            QImage.Format.Format_RGB888
+            QImage.Format.Format_RGBA8888
         )
         
         return QPixmap.fromImage(q_image)
