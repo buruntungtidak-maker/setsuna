@@ -49,7 +49,7 @@ class CharacterGraphicsWidget(QGraphicsView):
         self.character_item: Optional[QGraphicsPixmapItem] = None
         
         # Setup widget
-        self.setRenderHint(QGraphicsView.RenderHint.SmoothPixmapTransform)
+        self.setrenderHint(QGraphicsView.renderHint.SmoothPixmapTransform)
         self.setStyleSheet("background: transparent;")
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
