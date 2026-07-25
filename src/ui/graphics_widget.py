@@ -49,7 +49,8 @@ class CharacterGraphicsWidget(QGraphicsView):
         self.setScene(self.scene)
         
         # Configure view properties
-        self.setRenderHint(QGraphicsView.RenderHint.SmoothPixmapTransform)
+        # Note: QGraphicsView handles rendering hints automatically
+        # No need to set RenderHint on QGraphicsView itself
         self.setStyleSheet("QGraphicsView { border: none; background: transparent; }")
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         
