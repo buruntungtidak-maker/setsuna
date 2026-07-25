@@ -74,11 +74,10 @@ class MainWindow(QMainWindow):
         main_layout = QVBoxLayout()
         central_widget.setLayout(main_layout)
         
-        # Character graphics
+        # Character graphics (Ini bagian yang diperbaiki)
         self.graphics_widget = CharacterGraphicsWidget(
-            character_manager,
-            window_width,
-            400
+            "assets",  # <- Menggunakan string path untuk folder aset
+            self       # <- Menambahkan self sebagai parent
         )
         main_layout.addWidget(self.graphics_widget)
         
