@@ -7,8 +7,8 @@ from pathlib import Path
 from typing import Optional
 
 from PySide6.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsPixmapItem
-from PySide6.QtGui import QPixmap, QImage
-from PySide6.QtCore import Qt
+from PySide6.QtGui import QPixmap, QImage, QPainter
+from PySide6.QtCore import Qt, QTimer
 
 from src.character.character_loader import CharacterLoader
 from src.character.layer_renderer import LayerRenderer
@@ -25,7 +25,7 @@ class CharacterGraphicsWidget(QGraphicsView):
     - Support layer composition
     """
     
-    def __init__(self, assets_dir: Path, character_name: str = "Setsuna"):
+    def __init__(self, assets_dir: Path | str, character_name: str = "default"):
         """
         Initialize CharacterGraphicsWidget.
         
@@ -40,8 +40,8 @@ class CharacterGraphicsWidget(QGraphicsView):
         self.character_name = character_name
         
         # Initialize components
-        self.character_loader = CharacterLoader(assets_dir)
-        self.layer_renderer = LayerRenderer(Path(assets_dir) / "characters" / character_name)
+        self.character_loader = CharacterLoader(self.assets_dir)
+        self.layer_renderer = LayerRenderer(self.assets_dir / "characters" / self.character_name)
         self.current_pixmap_item: Optional[QGraphicsPixmapItem] = None
         
         # Setup graphics scene
@@ -49,13 +49,31 @@ class CharacterGraphicsWidget(QGraphicsView):
         self.setScene(self.scene)
         
         # Configure view properties
-        # Note: QGraphicsView handles rendering hints automatically
-        # No need to set RenderHint on QGraphicsView itself
-        self.setStyleSheet("QGraphicsView { border: none; background: transparent; }")
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        
+        # Setup widget
+        self.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform)
+        self.setStyleSheet("background: transparent; border: none;")
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.setMinimumSize(400, 400)
+        
+        # Refresh timer for animation
+        self.refresh_timer = QTimer()
+        self.refresh_timer.timeout.connect(self.update_character)
+        self.refresh_timer.start(16)  # ~60 FPS
+        
+        # Initial render
+        self.update_character()
         
         self.logger.debug("CharacterGraphicsWidget initialized")
     
+    def update_character(self) -> None:
+        """
+        Trigger a re-render of the character.
+        """
+        self.render_character()
+
     def load_character(self) -> bool:
         """
         Load character and render to scene.
@@ -119,7 +137,6 @@ class CharacterGraphicsWidget(QGraphicsView):
             # Update scene
             self.display_pixmap(pixmap)
             
-            self.logger.info(f"Character rendered: {pixmap.width()}x{pixmap.height()}")
             return True
             
         except Exception as e:
@@ -144,8 +161,6 @@ class CharacterGraphicsWidget(QGraphicsView):
             
             # Adjust scene rect to pixmap
             self.scene.setSceneRect(self.current_pixmap_item.boundingRect())
-            
-            self.logger.debug("Pixmap displayed in scene")
             
         except Exception as e:
             self.logger.error(f"Error displaying pixmap: {e}", exc_info=True)
