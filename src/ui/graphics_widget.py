@@ -55,6 +55,7 @@ class CharacterGraphicsWidget(QGraphicsView):
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         
 
+
         # Setup widget
         self.setrenderHint(QGraphicsView.renderHint.SmoothPixmapTransform)
         self.setStyleSheet("background: transparent;")
@@ -71,6 +72,9 @@ class CharacterGraphicsWidget(QGraphicsView):
         self.update_character()
         self.logger.debug("CharacterGraphicsWidget initialized")
         
+        self.logger.debug("CharacterGraphicsWidget initialized")
+    
+
     def load_character(self) -> bool:
         """
         Load character and render to scene.
